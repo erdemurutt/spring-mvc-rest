@@ -2,7 +2,6 @@ package com.erdemurut.springframework.controllers.v1;
 
 import com.erdemurut.springframework.api.v1.model.CategoryDTO;
 import com.erdemurut.springframework.api.v1.model.CategoryListDTO;
-import com.erdemurut.springframework.domain.Category;
 import com.erdemurut.springframework.services.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +22,13 @@ public class CategoryController {
 
 	@GetMapping()
 	public ResponseEntity<CategoryListDTO> getAllCategories() {
-		return new ResponseEntity<CategoryListDTO>(
+		return new ResponseEntity<>(
 				new CategoryListDTO(categoryService.getAllCategories()), HttpStatus.OK);
 	}
 
 	@GetMapping("{name}")
 	public ResponseEntity<CategoryDTO> getCategoryByName(@PathVariable String name) {
-		return new ResponseEntity<CategoryDTO>(categoryService.getCategoryByName(name), HttpStatus.OK);
+		return new ResponseEntity<>(categoryService.getCategoryByName(name), HttpStatus.OK);
 	}
 
 }

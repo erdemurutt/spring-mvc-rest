@@ -65,7 +65,7 @@ class CategoryControllerTest {
 	@Test
 	void testGetByNameCategories() throws Exception {
 		CategoryDTO category1 = new CategoryDTO();
-		category1.setId(1l);
+		category1.setId(1L);
 		category1.setName(NAME);
 
 		when(categoryService.getCategoryByName(anyString())).thenReturn(category1);
