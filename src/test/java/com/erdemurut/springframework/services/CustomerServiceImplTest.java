@@ -50,7 +50,6 @@ class CustomerServiceImplTest {
 		List<CustomerDTO> customerDTOS = customerService.getAllCustomers();
 
 		assertEquals(2, customerDTOS.size());
-
 	}
 
 	@Test

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
+	public static final String API_URL = "/api/v1/customer/";
 	private final CustomerMapper customerMapper;
 	private final CustomerRepository customerRepository;
 
@@ -22,11 +23,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public List<CustomerDTO> getAllCustomers() {
-		return customerRepository.findAll()
+		return customerRepository
+				.findAll()
 				.stream()
 				.map(customer -> {
 					CustomerDTO customerDTO = customerMapper.customerToCustomerDTO(customer);
-					customerDTO.setCustomerUrl("/api/v1/customer/" + customer.getId());
+					customerDTO.setCustomerUrl(API_URL + customer.getId());
 					return customerDTO;
 				}).collect(Collectors.toList());
 	}
@@ -35,12 +37,18 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerDTO getCustomerById(Long id) {
 		return customerRepository.findById(id)
 				.map(customerMapper::customerToCustomerDTO)
+				.map(customerDTO -> {
+					customerDTO.setCustomerUrl(API_URL + id);
+					return customerDTO;
+				})
 				.orElseThrow(RuntimeException::new);
 	}
 
 	@Override
 	public CustomerDTO getCustomerByFirstName(String name) {
-		return customerMapper.customerToCustomerDTO(customerRepository.findByFirstname(name));
+		CustomerDTO customerDTO = customerMapper.customerToCustomerDTO(customerRepository.findByFirstname(name));
+		customerDTO.setCustomerUrl(API_URL + customerDTO.getId());
+		return customerDTO;
 	}
 
 	@Override
@@ -60,8 +68,27 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer savedCustomer = customerRepository.save(customer);
 
 		CustomerDTO returnDTO = customerMapper.customerToCustomerDTO(savedCustomer);
-		returnDTO.setCustomerUrl("/api/v1/customer/" + savedCustomer.getId());
+		returnDTO.setCustomerUrl(API_URL + savedCustomer.getId());
 
 		return returnDTO;
+	}
+
+	@Override
+	public CustomerDTO patchCustomer(Long id, CustomerDTO customerDTO) {
+		return customerRepository.findById(id).map(customer -> {
+
+			if (customerDTO.getFirstname() != null) {
+				customer.setFirstname(customerDTO.getFirstname());
+			}
+
+			if (customerDTO.getLastname() != null) {
+				customer.setLastname(customerDTO.getLastname());
+			}
+
+			CustomerDTO returnDTO = customerMapper.customerToCustomerDTO(customerRepository.save(customer));
+			returnDTO.setCustomerUrl(API_URL + id);
+
+			return returnDTO;
+		}).orElseThrow(RuntimeException::new);
 	}
 }
