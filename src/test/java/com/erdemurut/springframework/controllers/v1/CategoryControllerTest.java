@@ -1,6 +1,7 @@
 package com.erdemurut.springframework.controllers.v1;
 
 import com.erdemurut.springframework.api.v1.model.CategoryDTO;
+import com.erdemurut.springframework.controllers.RestResponseEntityExceptionHandler;
 import com.erdemurut.springframework.services.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,9 @@ class CategoryControllerTest {
 	void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(categoryController)
+				.setControllerAdvice(new RestResponseEntityExceptionHandler())
+				.build();
 	}
 
 	@Test
@@ -56,7 +59,7 @@ class CategoryControllerTest {
 
 		when(categoryService.getAllCategories()).thenReturn(categories);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/categories/")
+		mockMvc.perform(MockMvcRequestBuilders.get(CategoryController.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.categories", hasSize(2)));
@@ -70,7 +73,7 @@ class CategoryControllerTest {
 
 		when(categoryService.getCategoryByName(anyString())).thenReturn(category1);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/categories/" + NAME)
+		mockMvc.perform(MockMvcRequestBuilders.get(CategoryController.BASE_URL + NAME)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name", equalTo(NAME)));

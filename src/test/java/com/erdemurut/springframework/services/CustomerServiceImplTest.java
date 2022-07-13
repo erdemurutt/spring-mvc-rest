@@ -37,13 +37,13 @@ class CustomerServiceImplTest {
 	void getAllCustomers() throws Exception {
 		Customer customer1 = new Customer();
 		customer1.setId(1L);
-		customer1.setFirstname("Michale");
-		customer1.setLastname("Weston");
+		customer1.setFirstname("Erdem");
+		customer1.setLastname("Ürüt");
 
 		Customer customer2 = new Customer();
 		customer2.setId(2L);
-		customer2.setFirstname("Sam");
-		customer2.setLastname("Axe");
+		customer2.setFirstname("Betül");
+		customer2.setLastname("Ürüt");
 
 		when(customerRepository.findAll()).thenReturn(Arrays.asList(customer1, customer2));
 
@@ -53,17 +53,17 @@ class CustomerServiceImplTest {
 	}
 
 	@Test
-	void getCustomerById() throws Exception {
+	void getCustomerById() {
 		Customer customer1 = new Customer();
 		customer1.setId(1L);
-		customer1.setFirstname("Michale");
-		customer1.setLastname("Weston");
+		customer1.setFirstname("Erdem");
+		customer1.setLastname("Ürüt");
 
 		when(customerRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(customer1));
 
 		CustomerDTO customerDTO = customerService.getCustomerById(1L);
 
-		assertEquals("Michale", customerDTO.getFirstname());
+		assertEquals("Erdem", customerDTO.getFirstname());
 	}
 
 	@Test
@@ -81,7 +81,7 @@ class CustomerServiceImplTest {
 		CustomerDTO savedDto = customerService.createNewCustomer(customerDTO);
 
 		assertEquals(customerDTO.getFirstname(), savedDto.getFirstname());
-		assertEquals("/api/v1/customer/1", savedDto.getCustomerUrl());
+		assertEquals("/api/v1/customers/1", savedDto.getCustomerUrl());
 	}
 
 	@Test
@@ -99,6 +99,6 @@ class CustomerServiceImplTest {
 		CustomerDTO savedDto = customerService.saveCustomerByDTO(1L, customerDTO);
 
 		assertEquals(customerDTO.getFirstname(), savedDto.getFirstname());
-		assertEquals("/api/v1/customer/1", savedDto.getCustomerUrl());
+		assertEquals("/api/v1/customers/1", savedDto.getCustomerUrl());
 	}
 }
