@@ -4,7 +4,6 @@ import com.erdemurut.springframework.api.v1.mapper.CustomerMapper;
 import com.erdemurut.springframework.api.v1.model.CustomerDTO;
 import com.erdemurut.springframework.domain.Customer;
 import com.erdemurut.springframework.repositories.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,16 +12,11 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-	private CustomerMapper customerMapper;
-	private CustomerRepository customerRepository;
+	private final CustomerMapper customerMapper;
+	private final CustomerRepository customerRepository;
 
-	@Autowired
-	public void setCustomerMapper(CustomerMapper customerMapper) {
+	public CustomerServiceImpl(CustomerMapper customerMapper, CustomerRepository customerRepository) {
 		this.customerMapper = customerMapper;
-	}
-
-	@Autowired
-	public void setCustomerRepository(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
 	}
 
@@ -51,10 +45,23 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerDTO createNewCustomer(CustomerDTO customerDTO) {
+		return saveAndReturnDTO(customerMapper.customerDtoToCustomer(customerDTO));
+	}
+
+	@Override
+	public CustomerDTO saveCustomerByDTO(Long id, CustomerDTO customerDTO) {
 		Customer customer = customerMapper.customerDtoToCustomer(customerDTO);
+		customer.setId(id);
+
+		return saveAndReturnDTO(customer);
+	}
+
+	public CustomerDTO saveAndReturnDTO(Customer customer) {
 		Customer savedCustomer = customerRepository.save(customer);
+
 		CustomerDTO returnDTO = customerMapper.customerToCustomerDTO(savedCustomer);
 		returnDTO.setCustomerUrl("/api/v1/customer/" + savedCustomer.getId());
+
 		return returnDTO;
 	}
 }
