@@ -6,6 +6,7 @@ import com.erdemurut.springframework.bootstrap.Bootstrap;
 import com.erdemurut.springframework.domain.Customer;
 import com.erdemurut.springframework.repositories.CategoryRepository;
 import com.erdemurut.springframework.repositories.CustomerRepository;
+import com.erdemurut.springframework.repositories.VendorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,9 @@ class CustomerServiceImplIT {
 	@Autowired
 	CategoryRepository categoryRepository;
 
+	@Autowired
+	VendorRepository vendorRepository;
+
 	CustomerService customerService;
 
 	@BeforeEach
@@ -38,14 +42,14 @@ class CustomerServiceImplIT {
 		System.out.println(customerRepository.findAll().size());
 
 		//setup data for testing
-		Bootstrap bootstrap = new Bootstrap(categoryRepository, customerRepository);
+		Bootstrap bootstrap = new Bootstrap(categoryRepository, customerRepository, vendorRepository);
 		bootstrap.run(); //load data
 
 		customerService = new CustomerServiceImpl(CustomerMapper.INSTANCE, customerRepository);
 	}
 
 	@Test
-	void patchCustomerUpdateFirstName() throws Exception {
+	void patchCustomerUpdateFirstName() {
 		String updatedName = "UpdatedName";
 		long id = getCustomerIdValue();
 
@@ -69,14 +73,13 @@ class CustomerServiceImplIT {
 	}
 
 	@Test
-	void patchCustomerUpdateLastName() throws Exception {
+	void patchCustomerUpdateLastName() {
 		String updatedName = "UpdatedName";
 		long id = getCustomerIdValue();
 
 		Customer originalCustomer = customerRepository.getOne(id);
 		assertNotNull(originalCustomer);
 
-		//save original first/last name
 		String originalFirstName = originalCustomer.getFirstname();
 		String originalLastName = originalCustomer.getLastname();
 
@@ -98,7 +101,6 @@ class CustomerServiceImplIT {
 
 		System.out.println("Customers Found: " + customers.size());
 
-		//return first id
 		return customers.get(0).getId();
 	}
 }

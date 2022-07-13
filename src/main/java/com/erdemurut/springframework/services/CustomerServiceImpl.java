@@ -47,8 +47,11 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDTO getCustomerByFirstName(String name) {
 		CustomerDTO customerDTO = customerMapper.customerToCustomerDTO(customerRepository.findByFirstname(name));
-		customerDTO.setCustomerUrl(getCustomerUrl(customerDTO.getId()));
-		return customerDTO;
+		if (customerDTO != null) {
+			customerDTO.setCustomerUrl(getCustomerUrl(customerDTO.getId()));
+			return customerDTO;
+		}
+		throw new ResourceNotFoundException();
 	}
 
 	@Override
